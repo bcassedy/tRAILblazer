@@ -45,43 +45,17 @@ class Params
   # user[address][street]=main&user[address][zip]=89436
   # should return
   # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
-  # def parse_www_encoded_form(www_encoded_form)
-  #   hashes = []
-  #   URI.decode_www_form(www_encoded_form).each do |key_val_pair|
-  #     hash_keys = parse_key(key_val_pair.first)
-  #     last_hash = { hash_keys.last => key_val_pair.last }
-  #     hashes << nest_hashes(hash_keys[0..-1], last_hash)
-  #   end
-  #   hashes.each do |hash|
-  #     @params = @params.deep_merge(hash)
-  #   end
-  # end
-
-  
-
   def parse_www_encoded_form(www_encoded_form)
-    params = {}
-    curr = params
+    hashes = []
     URI.decode_www_form(www_encoded_form).each do |key_val_pair|
-      curr = params
       hash_keys = parse_key(key_val_pair.first)
-      hash_keys.each_with_index do |key, i|
-        if curr[key].nil?
-          if i == (hash_keys.count - 1)
-            p params
-            curr[key] = key_val_pair.last
-          else
-            curr[key] = {}
-            curr = curr[key]
-          end
-          params.merge(curr)
-        end
-      end
+      last_hash = { hash_keys.last => key_val_pair.last }
+      hashes << nest_hashes(hash_keys[0..-1], last_hash)
     end
-
-    params
+    hashes.each do |hash|
+      @params = @params.deep_merge(hash)
+    end
   end
-
 
   def nest_hashes(hash_keys, last_hash)
     return last_hash if hash_keys.count == 1
