@@ -18,6 +18,7 @@ class ExampleController < ControllerBase
   def new
     page = <<-END
 <form action="/" method="post">
+<input type='hidden' name='authenticity_token' value='#{session['_csrf_token']}'>
   <input type="text" name="cat[name]">
   <input type="text" name="cat[owner]">
 
